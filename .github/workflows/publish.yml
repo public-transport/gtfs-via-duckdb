@@ -37,9 +37,9 @@ jobs:
       with:
         push: true
         tags: |
-          ghcr.io/public-transport/gtfs-via-postgres:latest
-          ghcr.io/public-transport/gtfs-via-postgres:4
-          ghcr.io/public-transport/gtfs-via-postgres:${{ github.ref_name }}
+          ghcr.io/public-transport/gtfs-via-duckdb:latest
+          ghcr.io/public-transport/gtfs-via-duckdb:5
+          ghcr.io/public-transport/gtfs-via-duckdb:${{ github.ref_name }}
         platforms: linux/amd64,linux/arm64
         # https://github.com/docker/build-push-action/blob/9472e9021074a3cb3279ba431598b8836d40433f/docs/advanced/cache.md#github-cache
         # https://github.com/moby/buildkit#registry-push-image-and-cache-separately
