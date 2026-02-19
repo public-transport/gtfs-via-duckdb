@@ -1,0 +1,89 @@
+{
+	"name": "gtfs-via-postgres",
+	"description": "Process GTFS using PostgreSQL.",
+	"version": "4.11.1",
+	"main": "lib/index.js",
+	"bin": {
+		"gtfs-to-sql": "cli.js",
+		"serve-gtfs-via-graphql": "scripts/run-postgraphile.js"
+	},
+	"files": [
+		"cli.js",
+		"index.js",
+		"scripts",
+		"lib",
+		"docs",
+		"example.sh",
+		"LICENSE",
+		"LICENSE-PROSPERITY.md",
+		"LICENSE-APACHE"
+	],
+	"keywords": [
+		"gtfs",
+		"public transport",
+		"transit",
+		"convert",
+		"postgres",
+		"postgresql",
+		"sql",
+		"graphql"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"contributors": [
+		"Daniel Langbein <daniel@systemli.org>",
+		"Magnus Burton <magnus.burton@me.com>",
+		"smohiudd <saadiq@developmentseed.org>",
+		"@mattkinnia"
+	],
+	"homepage": "https://github.com/public-transport/gtfs-via-postgres/tree/4.11.1",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/public-transport/gtfs-via-postgres.git"
+	},
+	"bugs": "https://github.com/public-transport/gtfs-via-postgres/issues",
+	"license": "(Apache-2.0 AND Prosperity-3.0.0)",
+	"funding": [
+		{
+			"type": "github",
+			"url": "https://github.com/sponsors/derhuerst"
+		},
+		{
+			"type": "patreon",
+			"url": "https://patreon.com/derhuerst"
+		},
+		{
+			"type": "liberapay",
+			"url": "https://liberapay.com/derhuerst"
+		}
+	],
+	"engines": {
+		"node": ">=20.17"
+	},
+	"dependencies": {
+		"csv-stringify": "^6.2.0",
+		"debug": "^4.3.3",
+		"gtfs-utils": "^5.1.0",
+		"sequencify": "0.0.7"
+	},
+	"devDependencies": {
+		"@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+		"@graphile/postgis": "^0.2.0-0",
+		"@yao-pkg/pkg": "^6.6.0",
+		"csv-parser": "^3.0.0",
+		"eslint": "^8.33.0",
+		"postgraphile": "^4.12.11",
+		"sample-gtfs-feed": "^0.13.0"
+	},
+	"peerDependencies": {
+		"@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+		"@graphile/postgis": "^0.2.0-0",
+		"postgraphile": "^4.12.11"
+	},
+	"scripts": {
+		"test": "./test/index.sh",
+		"lint": "eslint .",
+		"benchmark": "./benchmark/run.sh",
+		"build-binaries": "pkg --public -t node22-macos-x64,node22-macos-arm64,node22-linux-x64,node22-linux-arm64 -o dist/gtfs-via-postgres cli.js && gzip -k --best dist/gtfs-via-postgres-*",
+		"prepublishOnly": "npm run lint && npm test"
+	}
+}

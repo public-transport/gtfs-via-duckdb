@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+
+.nvm-version
+node_modules
+pnpm-debug.log
+
+/package-lock.json
+/yarn.lock
+/shrinkwrap.yaml
+
+/test/amtrak-gtfs-2021-10-06
+
+/*.gtfs
+/*.gtfs.zip
+/*.gtfs.tar.gz
+/*.gtfs.tar.zst

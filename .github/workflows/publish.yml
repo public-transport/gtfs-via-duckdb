@@ -1,0 +1,147 @@
+name: build & upload binaries
+
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  test:
+    name: run tests
+    uses: './.github/workflows/test.yml'
+
+  binaries:
+    name: build binaries & publish as GitHub release
+    needs: [test]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+    - run: npm install
+
+    - name: build binaries
+      run: |
+        npm run build-binaries
+        ls -lh dist
+    - name: create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: gtfs-via-postgres@${{ github.ref }}
+    - name: upload x64 macOS binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-macos-x64
+        asset_name: gtfs-via-postgres-macos-x64
+        asset_content_type: application/octet-stream
+    - name: upload compressed x64 macOS binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-macos-x64.gz
+        asset_name: gtfs-via-postgres-macos-x64.gz
+        asset_content_type: application/octet-stream
+    - name: upload arm64 macOS binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-macos-arm64
+        asset_name: gtfs-via-postgres-macos-arm64
+        asset_content_type: application/octet-stream
+    - name: upload compressed arm64 macOS binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-macos-arm64.gz
+        asset_name: gtfs-via-postgres-macos-arm64.gz
+        asset_content_type: application/octet-stream
+    - name: upload x64 Linux binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-linux-x64
+        asset_name: gtfs-via-postgres-linux-x64
+        asset_content_type: application/octet-stream
+    - name: upload compressed x64 Linux binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-linux-x64.gz
+        asset_name: gtfs-via-postgres-linux-x64.gz
+        asset_content_type: application/octet-stream
+    - name: upload arm64 Linux binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-linux-arm64
+        asset_name: gtfs-via-postgres-linux-arm64
+        asset_content_type: application/octet-stream
+    - name: upload compressed arm64 Linux binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/gtfs-via-postgres-linux-arm64.gz
+        asset_name: gtfs-via-postgres-linux-arm64.gz
+        asset_content_type: application/octet-stream
+
+  docker-image:
+    name: build & publish Docker image
+    needs: [test]
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: log into the GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: use Docker buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: build Docker image & push to Docker Hub
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        tags: |
+          ghcr.io/public-transport/gtfs-via-postgres:latest
+          ghcr.io/public-transport/gtfs-via-postgres:4
+          ghcr.io/public-transport/gtfs-via-postgres:${{ github.ref_name }}
+        platforms: linux/amd64,linux/arm64
+        # https://github.com/docker/build-push-action/blob/9472e9021074a3cb3279ba431598b8836d40433f/docs/advanced/cache.md#github-cache
+        # https://github.com/moby/buildkit#registry-push-image-and-cache-separately
+        cache-from: type=gha
+        cache-to: type=gha,mode=max,oci-mediatypes=true,compression=zstd
