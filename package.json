@@ -64,7 +64,6 @@
 		"sequencify": "0.0.7"
 	},
 	"devDependencies": {
-		"@yao-pkg/pkg": "^6.6.0",
 		"csv-parser": "^3.0.0",
 		"eslint": "^8.33.0",
 		"sample-gtfs-feed": "^0.13.0"
@@ -73,7 +72,6 @@
 		"test": "./test/index.sh",
 		"lint": "eslint .",
 		"benchmark": "./benchmark/run.sh",
-		"build-binaries": "pkg --public -t node22-macos-x64,node22-macos-arm64,node22-linux-x64,node22-linux-arm64 -o dist/gtfs-via-postgres cli.js && gzip -k --best dist/gtfs-via-postgres-*",
 		"prepublishOnly": "npm run lint && npm test"
 	}
 }
