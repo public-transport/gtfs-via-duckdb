@@ -29,7 +29,7 @@ npm install -g gtfs-via-postgres
 
 Or use [`npx`](https://npmjs.com/package/npx). ✨
 
-There are also [prebuilt binaries](https://github.com/public-transport/gtfs-via-postgres/releases/latest) and [Docker images](https://github.com/public-transport/gtfs-via-postgres/pkgs/container/gtfs-via-postgres) available.
+There are also [Docker images](https://github.com/public-transport/gtfs-via-postgres/pkgs/container/gtfs-via-postgres) available.
 
 *Note:* `gtfs-via-postgres` **needs PostgreSQL >=14** to work, as it uses the [`WITH … AS NOT MATERIALIZED`](https://www.postgresql.org/docs/14/queries-with.html#id-1.5.6.12.7) syntax. You can check your PostgreSQL server's version with `psql -t -c 'SELECT version()'`.
 
