@@ -34,6 +34,11 @@ jobs:
     - name: install sponge (moreutils)
       run: sudo apt install -y moreutils
 
+    - name: install QSV
+      run: ./ci/install-qsv.sh
+    - name: enable QSV for file extensions other than .qsv
+      run: |
+        echo 'QSV_SKIP_FORMAT_CHECK=true' >>$GITHUB_ENV
     - name: install DuckDB
       run: |
         set -eux -o pipefail
