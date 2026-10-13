@@ -6,10 +6,9 @@ Are you trying to answer a question like those below?
 - Has the number of stop time events decreased, compared to the last dataset version?
 - Do specific routes stop running during certain time periods?
 
-`gtfs-via-duckdb` optionally provides a **(materialized) view `stats_by_route_date` to help with such SQL queries. Use the `--stats-by-route-date` flag to enable it** in the generated SQL:
+`gtfs-via-duckdb` optionally provides a **view `stats_by_route_date` to help with such SQL queries. Use `--stats-by-route-date=view` to enable it**:
 
-- If you run `gtfs-to-duckdb` with `--stats-by-route-date=view`, `stats_by_route_date` will be a "regular" non-materialized view. Use this option if you want to import the GTFS data quickly, and if you only query `stats_by_route_date` rarely or in time-uncritical scenarios.
-- If you pass `--stats-by-route-date=materialized-view`, the `stats_by_route_date` view will [be materialized](https://www.postgresql.org/docs/14/rules-materializedviews.html). Use this option if you need fast queries, and if you can tolerate significantly longer import times (3m for the 64mb 2023-03-05 SNCB/NMBS GTFS feed, 1h15m for the 540mb 2023-02-27 VBB GTFS feed).
+`stats_by_route_date` is a regular non-materialized view. The `materialized-view` option is currently unsupported and raises an error; use `view` instead.
 
 `stats_by_route_date` has the following columns:
 
@@ -32,7 +31,7 @@ So
 SELECT *
 FROM stats_by_route_date stats
 WHERE is_effective = True
-AND route_id = '17438_900', -- M1 tram line
+AND route_id = '17438_900' -- M1 tram line
 AND "date" >= '2023-03-19' -- Sunday, dow = 0
 AND "date" <= '2023-03-25' -- Saturday, dow = 6
 ORDER BY route_id, "date", is_effective DESC
